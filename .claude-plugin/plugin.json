@@ -1,0 +1,12 @@
+{
+  "name": "pilotso11-skills",
+  "version": "0.1.0",
+  "description": "Personal Claude Code skills by pilotso11",
+  "author": {
+    "name": "pilotso11",
+    "url": "https://github.com/pilotso11"
+  },
+  "homepage": "https://github.com/pilotso11/pilotso11-skills",
+  "license": "MIT",
+  "keywords": ["claude-code", "claude-skills", "skills"]
+}
