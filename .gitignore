@@ -15,3 +15,6 @@ npm-debug.log*
 
 # Claude Code local state
 .claude/
+
+# Planning/design artifacts — kept on disk for reference but not shipped
+docs/plans/
