@@ -95,7 +95,7 @@ Record the choice up-front; it constrains where titles can sit (clear of frame o
 For each screen:
 - **None** — plain `palette.linen` ground (Bench, Cellar instrument register).
 - **Programmatic Graphics** — sky gradient + hills + buildings drawn in `Graphics` primitives. Use only when the plate's atmosphere is minimal or stylised geometric.
-- **Generated SVG** — call `vinsim-image` MCP with a C-2 style prompt anchored on `2324b94d-b6b0-4218-9c1d-ddae93742152:GENERATED`. Matte + vectorise with `filter_speckle=12 + color_precision=3` (more aggressive for backgrounds where micro-detail reads as noise). Sanitise. Load with `data:{resolution:2}` and add as the first child of `staticLayer`.
+- **Generated SVG** — call your image-generation MCP (illustrative: `vinsim-image`) with a project-style prompt anchored on a known style reference (illustrative: `<STYLE_UUID>:GENERATED`). Matte + vectorise with `filter_speckle=12 + color_precision=3` (more aggressive for backgrounds where micro-detail reads as noise). Sanitise. Load with `data:{resolution:2}` and add as the first child of `staticLayer`.
 - **Screening pass** (always with generated backdrops over a dialog): apply `ColorMatrixFilter` (saturation × 0.7) + an `alpha 0.15-0.2` linen overlay rect between the backdrop and the dialog so the dialog dominates.
 
 Specify the choice + the prompt (if generated) + the screening pass.
@@ -119,7 +119,7 @@ For every text element, specify the helper + size + fill + extras:
 - **Speech / Vinny voice** — `spkText(s, { size: 12-14, italic: true, fill: palette.ink })`.
 - **Numerals** — `numericText(s, { size: 18-44, bold: true, fill: palette.gold | palette.ox })`. Anchor `"end"` for right-aligned scores.
 - Anchors: `"middle"` for centred; `"end"` for right-aligned. Default left.
-- **Title clearance**: anchor titles at `slots.S0.y0 + 14` minimum on screen-wide-frame screens to clear the gilt grape-corner ornament.
+- **Title clearance**: anchor titles at `slots.S0.y0 + 30` minimum on screen-wide-frame screens to clear the gilt grape-corner ornament. This matches the "Titles anchored at `slots.S0.y0` get clipped — move down ~30 px" rule in `screen-comparison`'s common-slips list; keep these two numbers in sync.
 
 ### 6. Controls (use shared Button when available)
 Decide each control's variant:
@@ -279,11 +279,18 @@ test("<Screen>: renders <key element>", async ({ page }) => {
   await page.goto("/");
   await waitForHook(page);
   await page.evaluate(() => {
-    window.__vinsim.store.<setup>();
-    window.__vinsim.store.navigate("<screen>");
+    window.__APP_STORE__.<setup>();
+    window.__APP_STORE__.navigate("<screen>");
   });
-  await page.waitForTimeout(2500);
-  expect(await page.evaluate(() => window.__vinsim.store.getState().currentScreen)).toBe("<screen>");
+  // Wait for a screen-specific anchor element instead of a fixed
+  // timeout — keeps the test deterministic and avoids the flake
+  // class created by hardcoded waits. Pick a Pixi `accessibleTitle`,
+  // a DOM marker, or a screen-state assertion that uniquely
+  // identifies the screen having mounted.
+  await page.waitForSelector("<UNIQUE_SCREEN_SELECTOR>");
+  expect(
+    await page.evaluate(() => window.__APP_STORE__.getState().currentScreen),
+  ).toBe("<screen>");
   await page.screenshot({ path: "test-results/<NN>-<screen>.png" });
 });
 ```
@@ -299,8 +306,8 @@ test("<Screen>: renders <key element>", async ({ page }) => {
 - `npx tsc --noEmit` clean
 - `npx playwright test --reporter=list` — all green
 - `screen-comparison <screen>` returns **A- or better** (use this for self-check before claiming done — A- is the production-ready gate defined in the screen-comparison rubric)
-- Committed with the project's commit-message style
-- Pushed via `gh auth git-credential` to `phase-c-build`
+- Committed in the style your repo uses (conventional commits / your team's prefix scheme / etc.)
+- Published per your repo's branching + PR workflow (direct push, feature-branch PR, trunk-based, etc.) — substitute the project's actual flow here
 ````
 
 ## Author principles

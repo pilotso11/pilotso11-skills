@@ -61,14 +61,25 @@ Edit the source file. Keep the diff minimal — only the lines needed for this p
 **Step 5 — Re-screenshot**
 Run the Playwright screenshot command. Wait for it to complete. Do not proceed until the screenshot file is updated.
 
-**Step 6 — Verify the property**
-Read both the plate and the new screenshot. Check **only the target property**. Do not audit other properties in this step — that is `screen-comparison`'s job, not this step's job.
+**Step 6 — Verify the property + lightweight regression check**
+Read both the plate and the new screenshot. Check **the target property** in
+detail. Then run a quick **regression scan** over every property already marked
+`✓ DONE` in the fix-list status table: glance at each one in the new screenshot
+and confirm the value the previous iteration set is still in place. This is a
+30-second eyeball pass, not a full re-audit — you're catching the case where
+fixing property B silently regresses property A. Full multi-property auditing
+remains `screen-comparison`'s job.
 
-Produce a one-row verdict:
+Produce a one-row verdict for the target property and a one-line regression
+status:
 
 | Property | Plate | Port (new) | Status | Verdict |
 |---|---|---|---|---|
 | Primary CTA — gilt stroke | 0.9px gilt @ 0.50 | 0.9px gilt @ 0.50 | ✓ | PASS — advance |
+
+**Regression check:** All N previously-completed properties still match their
+recorded values. ✓ / ✗ <if ✗, name the regressed property — that becomes the
+next item, before advancing to the next planned fix>.
 
 **Step 7 — Pass or retry**
 
@@ -93,7 +104,7 @@ If you notice another deviation while working, do not fix it in this session. Ad
 The fix is to match the plate, not to improve on it. If the plate shows a 240px button and the port has a 200px button, the fix is 240px — not 260px because that "looks better". The plate IS the spec.
 
 ### Confirm before any destructive change
-If the fix requires deleting or replacing a significant block (>10 lines), state what will be removed before editing and wait for confirmation if working interactively. If running unattended, log the removed block to a comment before deletion.
+If the fix requires deleting or replacing a significant block (>10 lines), state what will be removed before editing and wait for confirmation if working interactively. If running unattended, log the removed block to the session output (under the iteration's "Change" block) before deletion. **Do not** leave the removed code as a commented-out block in the source — version control already preserves it, and dead `//` blocks accumulate as false-positive context for future agents.
 
 ### Track the fix list state
 Maintain a running status table throughout the session:
