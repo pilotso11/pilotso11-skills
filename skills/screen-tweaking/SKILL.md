@@ -78,7 +78,9 @@ Produce a one-row verdict:
 
 ### After all items
 
-Run a full `screen-comparison` pass on the updated render. The fix-iteration loop is complete when the comparison returns **B+ or better**. If it returns below B+, use the new comparison's fix list as input for the next iteration round.
+Run a full `screen-comparison` pass on the updated render. The fix-iteration loop is complete when the comparison returns **A- or better** (the production-ready gate defined in the screen-comparison rubric). If it returns below A-, use the new comparison's fix list as input for the next iteration round.
+
+This matches the invocation rule below ("After `screen-comparison` returns < A-"); trigger and stop share the same boundary so a B+ result is *not* simultaneously "done" and "re-invoke this skill".
 
 ---
 
@@ -111,7 +113,10 @@ Print this table at the start of each iteration so the state is always visible.
 
 ## Output format per iteration
 
-```markdown
+The outer fence below is **four backticks** so the inner `diff` fence nests
+cleanly.
+
+````markdown
 ## Iteration <N> — <Element — Property>
 
 **Fix:** <one-sentence description of the change>
@@ -133,7 +138,7 @@ Print this table at the start of each iteration so the state is always visible.
 <If FAIL or BLOCKED: one-sentence diagnosis>
 
 ---
-```
+````
 
 ## Completing a session
 
@@ -149,8 +154,8 @@ At the end of a fix session, emit:
 <list of deviations noticed but not touched>
 
 ### Next step
-- If grade ≥ B+: screen is ready for PR. Run final `screen-comparison` to confirm grade.
-- If grade < B+: run `screen-comparison` on updated render to generate next fix list.
+- If grade ≥ A-: screen is ready for PR. Run final `screen-comparison` to confirm grade.
+- If grade < A-: run `screen-comparison` on updated render to generate next fix list.
 - If BLOCKED items remain: describe each blocker with a specific question for the developer.
 ```
 

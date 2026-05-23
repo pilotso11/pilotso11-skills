@@ -178,7 +178,10 @@ For each dynamic element, declare:
 
 ## Output template
 
-```markdown
+The outer fence below is **four backticks** so the inner `ts` and `markdown`
+fences nest cleanly.
+
+````markdown
 # <Screen> — implementation spec (decomposed from <plate path>)
 
 ## 1. Frame strategy
@@ -295,10 +298,10 @@ test("<Screen>: renders <key element>", async ({ page }) => {
 ## 14. Definition of done
 - `npx tsc --noEmit` clean
 - `npx playwright test --reporter=list` — all green
-- `screen-comparison <screen>` returns **B+ or better** (use this for self-check before claiming done)
+- `screen-comparison <screen>` returns **A- or better** (use this for self-check before claiming done — A- is the production-ready gate defined in the screen-comparison rubric)
 - Committed with the project's commit-message style
 - Pushed via `gh auth git-credential` to `phase-c-build`
-```
+````
 
 ## Author principles
 
@@ -315,6 +318,6 @@ test("<Screen>: renders <key element>", async ({ page }) => {
 - Before writing any `app/src/screens/<new-screen>.ts`.
 - When briefing a subagent (`developer-task-executor`) for a port — the decomposition becomes the brief verbatim.
 - When revising a screen — produce a fresh decomposition, then diff against the existing source to find the gap.
-- When a screen-comparison audit returns < B+ and the fix list is non-trivial — re-decompose from scratch.
+- When a screen-comparison audit returns < A- and the fix list is non-trivial — re-decompose from scratch.
 
 The output of this skill is the *brief* and the *acceptance criteria*. Pair with `screen-comparison` post-build: decomposition forward, comparison backward. Together they close the visual-fidelity loop without leaving room for impressionistic shortcuts.

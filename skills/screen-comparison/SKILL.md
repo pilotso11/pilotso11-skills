@@ -1,6 +1,6 @@
 ---
 name: screen-comparison
-description: Granular side-by-side audit of a rendered screen vs its locked sample plate. Inventories every visual element (frame, layout, typography, controls, info presentation, iconography, characters, atmosphere, palette, game-system consistency), marks plate vs port match per element, and produces a categorised score + a prioritised fix list. Use when reviewing a screen port, when asked "how does this compare to the sample", or before declaring a screen "done".
+description: Granular side-by-side audit of a rendered screen vs its locked sample plate. Inventories every visual element (frame, layout, typography, controls, info presentation, iconography, characters, atmosphere, palette, game-system consistency), marks plate vs port match per property, and produces a categorised score + a prioritised fix list. Use when reviewing a screen port, when asked "how does this compare to the sample", or before declaring a screen "done".
 ---
 
 # Screen Comparison
@@ -22,7 +22,7 @@ You are a UI critique specialist. The goal is **granular, structured audit** of 
 3. **Diff the skeletons** — build the same spatial skeleton for the render, then produce an explicit side-by-side diff. Layout mismatches must surface here as numbers, not impressions.
 4. **Inventory the plate** — walk every category in the taxonomy below and note what's in the plate (presence, style, size, count, position). Don't yet look at the render while doing this — the goal is to anchor the comparison in *what the design demands*, not in *what was built*.
 5. **Inventory the render** against the same taxonomy.
-6. **Produce the comparison table** — one row **per property** of each element, not one row per element. See *Property decomposition* below. Columns: Element — Property / Plate / Port / Status / Notes. Status uses ✓ match, ~ partial, ✗ miss, + extra-not-in-plate.
+6. **Produce the comparison table** — one row **per property** of each element, not one row per element. See *Property decomposition* below. Columns: Category / Element — Property / Plate / Port / Status / Notes. Status uses ✓ match, ~ partial, ✗ miss, + extra-not-in-plate.
 7. **Score by category** — pass / minor / major / missing. Sum to an overall grade.
 8. **Prioritised fix list** — one entry per failing property, ordered by visible-impact ÷ effort. Top item first. Each entry must name the exact property and the exact change needed.
 
@@ -309,11 +309,11 @@ hierarchy. **A** requires every category at pass with zero `+ extra`.
 | State & interaction | … | … |
 | Game-system consistency | … | … |
 
-## Overall grade: <A | B+ | B | B- | C+ | C | C- | D | F>
+## Overall grade: <A+ | A | A- | B+ | B | B- | C+ | C | C- | D | F>
 
 ## Prioritised fix list
 
-Each entry targets one property. This list feeds directly into `screen-fix-iteration`.
+Each entry targets one property. This list feeds directly into `screen-tweaking`.
 
 1. **<Element — Property>** — exact change required. File: `app/src/screens/<screen>.ts`, function: `<buildX>`.
 2. **<Next>** — …
@@ -323,15 +323,30 @@ Each entry targets one property. This list feeds directly into `screen-fix-itera
 
 ## Grading rubric
 
-- **A** — Every property passes with zero `+ extra` deviations. The port could sit next to the plate and a reasonable observer wouldn't immediately reject it.
-- **A-** — At most one minor; zero majors; zero load-bearing `+ extra` rows that change composition or visual hierarchy.
-- **B** — Atmosphere + frame + palette all correct AND ≤2 categories at minor. No majors.
-- **C** — Half the categories have major issues OR multiple `+ extra` rows that add chrome the plate doesn't show. Recognizable as the same screen, but the design's *intent* is undersold.
-- **D** — Wireframe-level fidelity. Right boxes in roughly right places but no chrome, no atmosphere, no palette match.
-- **F** — Broken state — missing elements, wrong layout, would mislead a user about the screen's purpose.
+The full grade scale, finest to coarsest. Use the highest grade the port
+*fully* satisfies — if it borderlines two, take the lower.
 
-A "structural match" alone never exceeds **C**. The plate IS the spec.
-Extra chrome — even "on-brand" extras — is a deviation, not a pass.
+| Grade | Definition |
+|---|---|
+| **A+** | Indistinguishable from the plate at a glance. Every property passes, zero `+ extra`, zero minors, zero majors. The port could be mistaken for the plate. |
+| **A**  | Every property passes; zero majors; zero `+ extra` deviations. Reasonable observer wouldn't immediately reject. One or two cosmetic minors tolerated only if they don't affect any category score. |
+| **A-** | ≤1 minor in any single category; zero majors; zero load-bearing `+ extra` rows that change composition or visual hierarchy. **Production-ready gate.** |
+| **B+** | Atmosphere + frame + palette correct; ≤2 minors across at most 2 categories; ≤1 non-load-bearing `+ extra`; zero majors. |
+| **B**  | Atmosphere + frame + palette correct AND ≤2 categories at minor. No majors. ≤2 non-load-bearing `+ extra` rows. |
+| **B-** | Atmosphere + frame + palette correct; ≤3 minors total, OR 1 major in a non-load-bearing category (e.g., iconography). |
+| **C+** | Recognizable as the same screen; 2 majors total OR multiple `+ extra` rows altering the visual hierarchy. Atmosphere is present but undersold. |
+| **C**  | Half the categories have major issues OR multiple `+ extra` rows add chrome the plate doesn't show. Recognizable but the design's *intent* is undersold. |
+| **C-** | Recognizable but more than half the categories have majors; key chrome (frame, atmosphere, palette) is wrong or missing in spirit. |
+| **D**  | Wireframe-level fidelity. Right boxes in roughly the right places, but no chrome, no atmosphere, no palette match. |
+| **F**  | Broken state — missing elements, wrong layout, would mislead a user about the screen's purpose. |
+
+### Hard constraints (overrides any grade)
+
+- A "structural match" alone **never exceeds C**. The plate IS the spec.
+- Extra chrome — even "on-brand" extras — is a deviation, not a pass.
+- A composition-region delta ≥10pp on the skeleton diff caps the grade at **B-** regardless of how the rest reads.
+- Any `+ extra` that changes the visual centre of gravity caps the grade at **B+**.
+- A missing region (present in plate, absent in port) caps the grade at **C**.
 
 ## Common slips to check every time
 
@@ -356,4 +371,4 @@ the specifics as examples and adapt to your codebase's equivalents.
 - When a port has been claimed complete but the user pushes back on visual fidelity.
 - Before opening a revision PR — to ground the diff in specific elements.
 
-The output of this skill is the *brief* for `screen-fix-iteration`. Each row in the prioritised fix list maps to one iteration of that skill.
+The output of this skill is the *brief* for `screen-tweaking`. Each row in the prioritised fix list maps to one iteration of that skill.
