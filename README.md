@@ -36,6 +36,9 @@ any `SKILL.md` without reinstalling.
 | Skill | Trigger | What it does |
 |---|---|---|
 | `hello` | User greets Claude | Confirms the plugin is loaded and active (smoke test) |
+| `screen-decomposition` | Before building or revising a screen against a locked sample plate | Reads the plate and produces a buildable spec — every visual element decomposed into its constructor call, layout coords, typography role, state binding, and asset source. The *before* half of the visual-fidelity loop. |
+| `screen-comparison` | After porting a screen, or "how does this compare to the sample" | Granular side-by-side audit of a rendered screen vs its locked sample plate. Inventories every visual element, marks plate-vs-port match per element, and produces a categorised score + prioritised fix list. The *after* half of the loop. |
+| `screen-tweaking` | After `screen-comparison` returns < A-, or "fix the screen" | Precision repair loop: fixes the screen one property at a time, verifying each change against the plate before moving on. Prevents the failure mode of changing many things at once and losing track of what helped vs regressed. |
 
 ## Publishing a new skill
 
